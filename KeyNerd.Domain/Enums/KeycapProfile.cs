@@ -6,6 +6,7 @@
         DOM,
         CUBE,
         SA,
-        SHORTSA
+        SHORTSA,
+        OEM
     }
 }

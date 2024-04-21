@@ -1,7 +1,10 @@
-﻿using KeyNerd.DataTransfer.Requests;
+﻿using KeyNerd.Api.Resolvers;
+using KeyNerd.DataTransfer.Requests;
 using KeyNerd.DataTransfer.Responses;
+using KeyNerd.DataTransfer.Settings;
 using KeyNerd.Domain.Entities;
 using KeyNerd.Service.Helpers;
+using Microsoft.Extensions.Options;
 
 namespace KeyNerd.Api
 {
@@ -12,6 +15,7 @@ namespace KeyNerd.Api
             CreateMapForCreateRequest();
             CreateMapForUpdateRequest();
             CreateMapForResponse();
+
         }
 
         private void CreateMapForCreateRequest()
@@ -27,12 +31,13 @@ namespace KeyNerd.Api
         private void CreateMapForResponse()
         {
             CreateMap<Keycap, GetKeycapByIdResponse>()
-                .ForMember(m => m.Photos, act => act.MapFrom(mf => mf.Photos.Select(photo => $"https://keynerd-keycap-photos.s3.ap-southeast-1.amazonaws.com/{photo.Url}")));
-            CreateMap<Keycap, GetPaginatedKeycapListResponse>();
+                .ForMember(m => m.Photos, act => act.MapFrom<KeycapPhotosResolver>());
+            CreateMap<Keycap, GetPaginatedKeycapListResponse>()
+                .ForMember(m => m.Photos, act => act.MapFrom<KeycapPhotosResolver>());
             CreateMap<KeycapDetail, GetKeycapDetailByIdResponse>()
-                .ForMember(m => m.FileUrl, act => act.MapFrom(mf => string.IsNullOrEmpty(mf.FileUrl) ? string.Empty : $"https://keynerd-keycap-details-file.s3.ap-southeast-1.amazonaws.com/{mf.FileUrl}"));
-            CreateMap<KeycapDetail, GetPaginatedKeycapDetailListResponse>();
-
+                .ForMember(m => m.FileUrl, act => act.MapFrom<KeycapDetailFileResolver>());
+            CreateMap<KeycapDetail, GetPaginatedKeycapDetailListResponse>()
+                .ForMember(m => m.FileUrl, act => act.MapFrom<KeycapDetailFileResolver>());
             CreateMap<Order, GetPaginatedOrderListResponse>();
             CreateMap<OrderDetail, GetPaginatedOrderDetailListResponse>()
                 .ForMember(m => m.Id, act => act.MapFrom(mf => mf.KeycapDetail.Id))
@@ -40,7 +45,8 @@ namespace KeyNerd.Api
                 .ForMember(m => m.Profile, act => act.MapFrom(mf => mf.KeycapDetail.Profile))
                 .ForMember(m => m.Size, act => act.MapFrom(mf => mf.KeycapDetail.Size))
                 .ForMember(m => m.Name, act => act.MapFrom(mf => mf.KeycapDetail.Keycap.Name))
-                .ForMember(m => m.Photos, act => act.MapFrom(mf => mf.KeycapDetail.Keycap.Photos.Select(n => $"https://keynerd-keycap-photos.s3.ap-southeast-1.amazonaws.com/{n.Url}")));
+                .ForMember(m => m.Photos, act => act.MapFrom<OrderDetailPhotosResolver>())
+                .ForMember(m => m.FileUrl, act => act.MapFrom<OrderDetailFileResolver>());
             CreateMap(typeof(PaginatedList<>), typeof(GetPaginatedListResponse<>));
         }
 

@@ -18,7 +18,8 @@ namespace KeyNerd.Service
 
         public async Task<string> UploadFile(string bucketName, IFormFile file)
         {
-            using (var client = new AmazonS3Client(_awsSettings.AccessKey, _awsSettings.SecretAccessKey, RegionEndpoint.APSoutheast1))
+            var region = RegionEndpoint.GetBySystemName(_awsSettings.Region);
+            using (var client = new AmazonS3Client(_awsSettings.AccessKey, _awsSettings.SecretAccessKey, region))
             {
                 using (var newMemoryStream = new MemoryStream())
                 {

@@ -38,7 +38,7 @@ namespace KeyNerd.Api.Controllers.Admin
             return Ok(_mapper.Map<GetPaginatedListResponse<GetPaginatedOrderListResponse>>(list));
         }
 
-        [HttpPost("status")]
+        [HttpPut("status")]
         public async Task<ActionResult> UpdateStatus([FromBody] UpdateOrderStatus request)
         {
             await _service.UpdateOrderStatus(request);

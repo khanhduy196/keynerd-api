@@ -9,5 +9,6 @@
         public string Profile { get; set; }
         public float Size { get; set; }
         public int Quantity { get; set; }
+        public string FileUrl { get; set; }
     }
 }

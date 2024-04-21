@@ -88,12 +88,14 @@ namespace KeyNerd.Service
 
         public PaginatedList<Keycap> GetList(int itemsPerPage, int currentPage, string? searchQuery)
         {
-            var data = _repository.AsQueryable().Include(n => n.Details).AsQueryable();
+            var data = _repository.AsQueryable().Include(n => n.Details).Include(n => n.Photos).AsQueryable();
 
             if(!string.IsNullOrEmpty(searchQuery))
             {
                 data = data.Where(n => n.Name.ToLower().Contains(searchQuery.ToLower()));
             }
+
+            data = data.OrderBy(n => n.Name);
 
             var list = new PaginatedList<Keycap>(itemsPerPage, currentPage, data);
 

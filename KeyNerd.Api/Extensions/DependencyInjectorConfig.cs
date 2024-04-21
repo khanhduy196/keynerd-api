@@ -20,7 +20,7 @@ namespace KeyNerd.Api.Extensions
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("Database")));
             //services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
             //services.AddTransient<IUserManager, UserManager>();
-            services.AddAutoMapper(typeof(AutoMapperProfile));
+            services.AddAutoMapper(typeof(Program).Assembly);
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddTransient<ICategoryService, CategoryService>();
             services.AddTransient<IKeycapService, KeycapService>();
