@@ -38,7 +38,7 @@ namespace KeyNerd.Service
             var data = _repository.AsQueryable().Include(n => n.Details)
                 .ThenInclude(n => n.KeycapDetail)
                 .ThenInclude(n => n.Keycap)
-                .ThenInclude(n => n.Photos).OrderByDescending(n => n.Id).AsQueryable();
+                .ThenInclude(n => n.Photos).OrderBy(n => n.Id).AsQueryable();
 
             if (status.HasValue)
             {

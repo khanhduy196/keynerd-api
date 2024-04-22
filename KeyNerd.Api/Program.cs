@@ -5,14 +5,18 @@ using FluentValidation.AspNetCore;
 using FluentValidation;
 using KeyNerd.DataTransfer.Validators;
 using System.Text.Json.Serialization;
-
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 ConfigurationManager configuration = builder.Configuration;
 builder.Services.AddCors();
-
+builder.Services.Configure<FormOptions>(x =>
+{
+    x.ValueLengthLimit = int.MaxValue;
+    x.MultipartBodyLengthLimit = int.MaxValue;
+});
 builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssembly(typeof(CreateKeycapRequestValidator).Assembly);
