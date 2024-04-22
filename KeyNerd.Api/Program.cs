@@ -17,6 +17,11 @@ builder.Services.Configure<FormOptions>(x =>
     x.ValueLengthLimit = int.MaxValue;
     x.MultipartBodyLengthLimit = int.MaxValue;
 });
+builder.WebHost.UseKestrel(options =>
+{
+    options.Limits.MaxConcurrentConnections = 100;
+    options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(5);
+});
 builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssembly(typeof(CreateKeycapRequestValidator).Assembly);
