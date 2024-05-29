@@ -17,12 +17,12 @@ namespace KeyNerd.Test
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddTransient<ICategoryService, CategoryService>();
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
-            //services.AddTransient<IMapper>(x =>
-            //{
-            //    var profile = new AutoMapperProfile();
-            //    var configuration = new MapperConfiguration(cfg => cfg.AddProfile(profile));
-            //    return new Mapper(configuration);
-            //});
+            services.AddTransient<IMapper>(x =>
+            {
+                var profile = new AutoMapperProfile();
+                var configuration = new MapperConfiguration(cfg => cfg.AddProfile(profile));
+                return new Mapper(configuration);
+            });
 
             return services;
         }

@@ -1,5 +1,4 @@
-﻿using KeyNerd.Infrastructure.Security;
-using KeyNerd.Persistence;
+﻿using KeyNerd.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace KeyNerd.Test
@@ -10,7 +9,7 @@ namespace KeyNerd.Test
         //{
         //}
 
-        public TestDbContext() : base()
+        public TestDbContext(DbContextOptions options) : base(options)
         {
         }
 
