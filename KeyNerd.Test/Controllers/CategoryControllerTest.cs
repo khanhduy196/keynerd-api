@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
 using KeyNerd.Api.Controllers.EndUser;
 using KeyNerd.DataTransfer.Requests;
-using KeyNerd.Domain.Entities;
-using KeyNerd.Infrastructure.Persistence;
-using KeyNerd.Persistence;
-using KeyNerd.Service;
 using KeyNerd.Service.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;

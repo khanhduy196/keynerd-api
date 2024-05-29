@@ -1,7 +1,6 @@
 ﻿using KeyNerd.Domain.Entities;
 using KeyNerd.Infrastructure.Persistence;
 using KeyNerd.Persistence;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace KeyNerd.Test.Repository
 {
