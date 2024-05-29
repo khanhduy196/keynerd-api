@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using KeyNerd.DataTransfer.Requests;
 using KeyNerd.DataTransfer.Responses;
-using KeyNerd.Domain.Entities;
 using KeyNerd.Service.Contracts;
 using Microsoft.AspNetCore.Mvc;
 

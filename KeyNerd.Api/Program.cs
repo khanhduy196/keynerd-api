@@ -38,7 +38,8 @@ var app = builder.Build();
 app.UseCors(x => x
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .WithOrigins(builder.Configuration.GetSection("AppSettings:AdminSiteUrl").Value));
+            .AllowAnyOrigin());
+            //.WithOrigins(builder.Configuration.GetSection("AppSettings:AdminSiteUrl").Value));
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
