@@ -8,6 +8,7 @@ jobs:
   test:
     uses: khanhduy196/keynerd-api/.github/workflows/test.yml@main
   build:
+    needs: test
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
