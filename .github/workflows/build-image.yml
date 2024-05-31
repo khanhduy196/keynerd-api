@@ -6,7 +6,7 @@ on:
 
 jobs:
   test:
-    uses: ./.github/workflows/test.yml@main
+    uses: khanhduy196/keynerd-api/.github/workflows/test.yml@main
   build:
     runs-on: ubuntu-latest
     steps:
