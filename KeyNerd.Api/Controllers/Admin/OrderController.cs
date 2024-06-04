@@ -45,5 +45,11 @@ namespace KeyNerd.Api.Controllers.Admin
             return Ok();
         }
 
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete([FromRoute] long id)
+        {
+            await _service.Delete(id);
+            return Ok() ;
+        }
     }
 }

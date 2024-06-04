@@ -13,13 +13,15 @@ namespace KeyNerd.Service
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRepository<Order> _repository;
+        private readonly IRepository<OrderDetail> _orderDetailRepository;
         private readonly IMapper _mapper;
 
-        public OrderService(IUnitOfWork unitOfWork, IRepository<Order> repository, IMapper mapper)
+        public OrderService(IUnitOfWork unitOfWork, IRepository<Order> repository, IMapper mapper, IRepository<OrderDetail> orderDetailRepository)
         {
             _unitOfWork = unitOfWork;
             _repository = repository;
             _mapper = mapper;
+            _orderDetailRepository = orderDetailRepository;
         }
 
         public async Task<Order> Create(CreateOrderRequest request)
@@ -31,6 +33,20 @@ namespace KeyNerd.Service
             await _unitOfWork.CommitAsync();
 
             return order;
+        }
+
+        public async Task Delete(long id)
+        {
+            var orderNeedToDelete = _repository.AsQueryable().Include(n => n.Details).SingleOrDefault(n => n.Id == id);
+            if(orderNeedToDelete is not null)
+            {
+                if(orderNeedToDelete.OrderStatus == OrderStatus.TO_DO)
+                {
+                    _orderDetailRepository.Delete(orderNeedToDelete.Details.ToList());
+                    _repository.Delete(orderNeedToDelete);
+                    await _unitOfWork.CommitAsync();
+                }
+            }
         }
 
         public PaginatedList<Order> GetList(int itemsPerPage, int currentPage, string? searchQuery, OrderStatus? status)

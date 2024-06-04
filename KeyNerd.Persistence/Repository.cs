@@ -44,10 +44,16 @@ namespace KeyNerd.Persistence
             dbSet.Add(entity);
         }
 
-        public virtual void Delete(params object[] keyValues)
+        public void Delete(List<TEntity> entities)
         {
-            TEntity entityToDelete = dbSet.Find(keyValues);
-            Delete(entityToDelete);
+            foreach(var entity in entities)
+            {
+                if (context.Entry(entity).State == EntityState.Detached)
+                {
+                    dbSet.Attach(entity);
+                }
+            }
+            dbSet.RemoveRange(entities);
         }
 
         public virtual void Delete(TEntity entity)

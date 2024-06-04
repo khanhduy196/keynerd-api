@@ -53,6 +53,7 @@ namespace KeyNerd.Api.Controllers.Admin
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut]
+        [DisableRequestSizeLimit]
         public async Task<ActionResult> Update([FromForm] UpdateKeycapRequest request)
         {
             await _service.Update(request);
@@ -101,8 +102,16 @@ namespace KeyNerd.Api.Controllers.Admin
 
             return Ok();
         }
+        
+        [HttpGet("getUsedDetails/{id}")]
+        public async Task<ActionResult<List<GetKeycapDetailByIdResponse>>> GetUsedDetailsOfKeycap([FromRoute] long id)
+        {
+            var details = await _service.GetUsedDetailsOfKeycap(id);
 
+            var response = _mapper.Map<List<GetKeycapDetailByIdResponse>>(details);
 
+            return Ok(response);
+        }
         #endregion
 
         #region Events

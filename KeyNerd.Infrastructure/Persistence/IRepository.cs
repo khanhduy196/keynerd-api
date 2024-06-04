@@ -11,8 +11,7 @@ namespace KeyNerd.Infrastructure.Persistence
 
         #region Methods
 
-        void Delete(params object[] keyValues);
-
+        void Delete(List<TEntity> entity);
         void Delete(TEntity entity);
 
         void Add(TEntity entity);

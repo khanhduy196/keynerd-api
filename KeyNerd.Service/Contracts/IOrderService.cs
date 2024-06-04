@@ -10,5 +10,6 @@ namespace KeyNerd.Service.Contracts
         Task<Order> Create(CreateOrderRequest request);
         PaginatedList<Order> GetList(int itemsPerPage, int currentPage, string? searchQuery, OrderStatus? status);
         Task UpdateOrderStatus(UpdateOrderStatus request);
+        Task Delete(long id);
     }
 }
