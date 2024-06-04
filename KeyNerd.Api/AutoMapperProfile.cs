@@ -1,10 +1,8 @@
 ﻿using KeyNerd.Api.Resolvers;
 using KeyNerd.DataTransfer.Requests;
 using KeyNerd.DataTransfer.Responses;
-using KeyNerd.DataTransfer.Settings;
 using KeyNerd.Domain.Entities;
 using KeyNerd.Service.Helpers;
-using Microsoft.Extensions.Options;
 
 namespace KeyNerd.Api
 {

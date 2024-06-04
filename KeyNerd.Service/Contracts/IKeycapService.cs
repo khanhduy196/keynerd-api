@@ -12,5 +12,7 @@ namespace KeyNerd.Service.Contracts
         Task Delete(long id);
         Task<Keycap> GetById(long id);
         PaginatedList<Keycap> GetList(int itemsPerPage, int currentPage, string? searchQuery);
+        Task<List<KeycapDetail>> GetUsedDetailsOfKeycap(long id);
+
     }
 }

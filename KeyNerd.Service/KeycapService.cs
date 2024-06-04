@@ -16,6 +16,7 @@ namespace KeyNerd.Service
 
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRepository<Keycap> _repository;
+        private readonly IRepository<OrderDetail> _orderDetailRepository;
         private readonly IStorageService _storageService;
         private readonly IMapper _mapper;
         private readonly StorageSettings _storageSettings;
@@ -27,13 +28,14 @@ namespace KeyNerd.Service
 
         #region Constructors
 
-        public KeycapService(IUnitOfWork unitOfWork, IRepository<Keycap> repository, IStorageService storageService, IMapper mapper, IOptions<StorageSettings> storageSettingsOption)
+        public KeycapService(IUnitOfWork unitOfWork, IRepository<Keycap> repository, IStorageService storageService, IMapper mapper, IOptions<StorageSettings> storageSettingsOption, IRepository<OrderDetail> orderDetailRepository)
         {
             _unitOfWork = unitOfWork;
             _repository = repository;
             _storageService = storageService;
             _mapper = mapper;
             _storageSettings = storageSettingsOption.Value;
+            _orderDetailRepository = orderDetailRepository;
         }
 
         #endregion
@@ -61,8 +63,6 @@ namespace KeyNerd.Service
 
             return keycap;
         }
-
-
 
         public async Task Delete(long id)
         {
@@ -104,28 +104,55 @@ namespace KeyNerd.Service
 
         public async Task Update(UpdateKeycapRequest request)
         {
-            var updated = _mapper.Map<Keycap>(request);
-
-            var keycap = await _repository.AsQueryable().Include(n => n.Details).FirstOrDefaultAsync(n => n.Id == updated.Id);
+            var keycap = await _repository.AsQueryable().Include(n => n.Details).FirstOrDefaultAsync(n => n.Id == request.Id);
 
             if(keycap is null)
             {
                 throw new Exception();
             }
 
+            var existingDetailIds = request.Details.Where(n => n.Id != 0).Select(n =>  n.Id).ToList();
+            var deletedDetailIds = keycap.Details.Where(n => !existingDetailIds.Contains(n.Id)).Select(n => n.Id).ToList();
+
+            if(_orderDetailRepository.AsQueryable().Any(n => deletedDetailIds.Contains(n.KeycapDetailId)))
+            {
+                throw new Exception("Cannot delete used detail id");
+            }
+
+            request.Details = request.Details.Where(n => n.Id == 0).ToList();
+            var updatedKeycap = _mapper.Map<Keycap>(request);
+
             int keycapDetaislLength = request.Details.Count();
             for (int i = 0; i < keycapDetaislLength; i++)
             {
                 if (request.Details[i].File != null)
                 {
-                    updated.Details[i].FileUrl = await _storageService.UploadFile(_storageSettings.KeycapDetailFileStorageName, request.Details[i].File);
+                    updatedKeycap.Details[i].FileUrl = await _storageService.UploadFile(_storageSettings.KeycapDetailFileStorageName, request.Details[i].File);
                 }
             }
 
-            keycap.Name = updated.Name;
-            keycap.Details.AddRange(updated.Details);
+            keycap.Name = updatedKeycap.Name;
+
+            // remove deleted details from the list
+            keycap.Details = keycap.Details.Where(n => existingDetailIds.Contains(n.Id)).ToList();
+            keycap.Details.AddRange(updatedKeycap.Details);
 
             await _unitOfWork.CommitAsync();
+        }
+
+        public async Task<List<KeycapDetail>> GetUsedDetailsOfKeycap(long id)
+        {
+            var keycap = await _repository.AsQueryable().Include(n => n.Details).SingleOrDefaultAsync(x => x.Id == id);
+
+            if (keycap is null)
+                return new List<KeycapDetail>() { };
+
+            var existingDetailIds = keycap.Details.Select(n => n.Id).ToList();
+            var usedDetailIds = _orderDetailRepository.AsQueryable().Where(n => existingDetailIds.Contains(n.KeycapDetailId))
+                .Select(n => n.KeycapDetailId)
+                .Distinct().ToList();
+            return keycap.Details.Where(n => usedDetailIds.Contains(n.Id)).ToList();
+
         }
 
         #endregion
