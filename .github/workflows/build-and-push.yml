@@ -1,4 +1,4 @@
-name: Build image
+name: Build and push
 
 on:
   workflow_dispatch:
@@ -46,6 +46,6 @@ jobs:
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: KeyNerdApiService
-        cluster: KeyNerdDockerCluster
+        service: arn:aws:ecs:ap-southeast-1:992382656133:service/KeyNerdDockerCluster/KeyNerdApiService
+        cluster: arn:aws:ecs:ap-southeast-1:992382656133:cluster/KeyNerdDockerCluster
         wait-for-service-stability: true        
