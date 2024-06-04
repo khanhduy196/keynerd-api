@@ -23,10 +23,11 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
 
-    - name: Build and push
-      uses: docker/build-push-action@v5
-      with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: public.ecr.aws/a2i7r0y0/keynerd-api:latest
+    - name: Build, tag, and push docker image to Amazon ECR
+      env:
+        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        REPOSITORY: keynerd-api
+        IMAGE_TAG: latest
+      run: |
+        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+        docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
