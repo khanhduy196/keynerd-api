@@ -17,7 +17,7 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
+        aws-region: ap-southeast-2
 
     - name: Login to Amazon ECR
       id: login-ecr
@@ -25,7 +25,7 @@ jobs:
 
     - name: Build, tag, and push docker image to Amazon ECR
       env:
-        REGISTRY: public.ecr.aws/a2i7r0y0
+        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         REPOSITORY: keynerd-api
         IMAGE_TAG: latest
       run: |
