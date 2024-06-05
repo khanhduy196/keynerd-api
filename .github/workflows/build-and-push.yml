@@ -34,18 +34,21 @@ jobs:
         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
         echo "image=$REGISTRY/$REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-    - name: Fill in the new image ID in the Amazon ECS task definition
-      id: task-def
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
-      with:
-        task-definition: .aws/task-definition.json
-        container-name: keynerd-api
-        image: ${{ steps.build-image.outputs.image }}
+    - name: Force new deployment in ESC service
+      run: |
+        aws ecs update-service --cluster KeyNerdCluster --service KeyNerdApiService --force-new-deployment
+    # - name: Fill in the new image ID in the Amazon ECS task definition
+    #   id: task-def
+    #   uses: aws-actions/amazon-ecs-render-task-definition@v1
+    #   with:
+    #     task-definition: .aws/task-definition.json
+    #     container-name: keynerd-api
+    #     image: ${{ steps.build-image.outputs.image }}
 
-    - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: KeyNerdApiService
-        cluster: KeyNerdCluster
-        wait-for-service-stability: true        
+    # - name: Deploy Amazon ECS task definition
+    #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+    #   with:
+    #     task-definition: ${{ steps.task-def.outputs.task-definition }}
+    #     service: KeyNerdApiService
+    #     cluster: KeyNerdCluster
+    #     wait-for-service-stability: true        
