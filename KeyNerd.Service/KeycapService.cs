@@ -119,7 +119,6 @@ namespace KeyNerd.Service
                 throw new Exception("Cannot delete used detail id");
             }
 
-            request.Details = request.Details.Where(n => n.Id == 0).ToList();
             var updatedKeycap = _mapper.Map<Keycap>(request);
 
             int keycapDetaislLength = request.Details.Count();
@@ -135,7 +134,24 @@ namespace KeyNerd.Service
 
             // remove deleted details from the list
             keycap.Details = keycap.Details.Where(n => existingDetailIds.Contains(n.Id)).ToList();
-            keycap.Details.AddRange(updatedKeycap.Details);
+            // update existing details
+            var updatedDetails = updatedKeycap.Details.Where(n => n.Id != 0);
+            foreach (var detail in keycap.Details)
+            {
+                var updatedDetai = updatedDetails.FirstOrDefault(n => n.Id == detail.Id);
+                if (updatedDetai is not null)
+                {
+                    detail.Profile = updatedDetai.Profile;
+                    detail.Size = updatedDetai.Size;
+                    if (!string.IsNullOrEmpty(updatedDetai.FileUrl))
+                    {
+                        detail.FileUrl = updatedDetai.FileUrl;
+                    }
+                }
+            }
+            // add newly added details
+            var newlyAddedDetais = updatedKeycap.Details.Where(n => n.Id == 0);
+            keycap.Details.AddRange(newlyAddedDetais);
 
             await _unitOfWork.CommitAsync();
         }
